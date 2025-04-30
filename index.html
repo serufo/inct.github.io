@@ -1,0 +1,188 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop RALI - INCT-TILD-IAR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .bg-hero {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <!-- Header -->
+    <header class="bg-hero text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Workshop RALI</h1>
+            <p class="text-xl md:text-2xl">I Workshop do INCT-TILD-IAR</p>
+            <p class="mt-2 text-lg">Instituto Nacional de Ciência e Tecnologia em Inteligência Artificial Responsável para Linguística Computacional e Tratamento e Disseminação de Informação</p>
+        </div>
+    </header>
+
+    <!-- Resumo -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-8">Resumo do Workshop</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                Este workshop marca o primeiro encontro presencial dos pesquisadores do recém-criado Instituto Nacional de Ciência e Tecnologia (INCT). O evento reúne especialistas para discutir avanços em inteligência artificial responsável, linguística computacional e disseminação de informação.
+            </p>
+        </div>
+    </section>
+
+    <!-- Temas de Interesse -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-8">Temas de Interesse</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Processamento de Linguagem Natural</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Mineração de Textos</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Gerenciamento de Dados Semi-estruturados</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Integração de Informações</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Recuperação de Informação</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Aprendizado de Máquina e IA</h3>
+                </div>
+                <!-- Adicione mais temas conforme necessário -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Programação -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-8">Programação</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">Manhã</h3>
+                    <ul class="space-y-4">
+                        <li><strong>08:00 - 08:30:</strong> Abertura e lançamento do INCT</li>
+                        <li><strong>08:30 - 09:30:</strong> Sessão Técnica I - Linguística Computacional</li>
+                        <li><strong>09:30 - 10:30:</strong> Sessão Técnica II - IA Responsável e Sustentável</li>
+                        <li><strong>10:30 - 11:00:</strong> Coffee break</li>
+                        <li><strong>11:00 - 12:00:</strong> Sessão Técnica III - Repositórios e Recursos Linguísticos</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">Tarde</h3>
+                    <ul class="space-y-4">
+                        <li><strong>14:00 - 15:00:</strong> Sessão Técnica IV - Busca e Recomendação</li>
+                        <li><strong>15:00 - 16:00:</strong> Sessão Técnica V - Disseminação de Informação</li>
+                        <li><strong>16:00 - 16:30:</strong> Coffee break</li>
+                        <li><strong>16:30 - 18:00:</strong> Sessão Plenária de Discussão</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comitê de Programa -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-8">Comitê de Programa</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Marcos André Gonçalves</strong> (UFMG)</p>
+                    <p>mgoncalv@dcc.ufmg.br</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Altigran Silva</strong> (UFAM)</p>
+                    <p>alti@icomp.ufa.edu.br</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Jussara Almeida</strong> (UFMG)</p>
+                    <p>jussara@dcc.ufmg.br</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Maria José Bocorny Finatto</strong> (UFRGS)</p>
+                    <p>mariafinatto@gmail.com</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Aline Paes</strong> (UFF)</p>
+                    <p>alinepaes@ic.uff.br</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Adriana Pagano</strong> (UFMG)</p>
+                    <p>apagano@ufmg.br</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p><strong>Jose Antonio Fernandes de Macedo</strong> (UFC)</p>
+                    <p>jose.macedo@insigthlab.ufc.br</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Participação -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-semibold mb-8">Participação e Trabalhos Esperados</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                Não haverá chamada aberta para submissões. Espera-se entre 50-80 participantes, com 15 trabalhos apresentados em 5 sessões técnicas.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Workshop RALI - INCT-TILD-IAR. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
